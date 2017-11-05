@@ -25,8 +25,9 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 1. 在utils.js 文件中 找到 generateLoaders 方法
 
 2. 把以下代码进行更换
-3. ```  
-        if (options.extract) {
+
+	```	
+		if (options.extract) {
             return ExtractTextPlugin.extract({
                 use: loaders,
                 fallback: 'vue-style-loader'
@@ -47,13 +48,15 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
             })
         } else {
             return ['vue-style-loader'].concat(loaders)
-        }```
+        }
+    ```
+        
 3. 图
 4. 打包就可以看到效果咯! 
 
 
 ### 2. Vue引入全局less变量
-1. 用vue-cli初始化 一个vue项目
+1. 用vue-cli初始化的vue项目
 2. 再build文件夹下创建一个globalLessVars.js文件
 3. 在globalLessVars.js文件中 放入如下代码
     
@@ -133,33 +136,24 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
              globalVars: allLess
         })
     ```
+>具体详情可以查看[使用webpack+vue+less开发，使用less-loader，配置全局less变量
+](https://zhuanlan.zhihu.com/p/27439821)
 
 ### 3. 去除vue项目中的 # --- History模式
     
-> 图
 
 >  如果后台没给前端的 history 模式 匹配路径的话， history 只适合在本地开发使用， 打包记得改回 hash 模式
-    
-    
+	
+	
 ### 4. 自定义路径名
     
 ``` import HelloWorld from '@/components/HelloWorld' ```
 
 1. 制定像 @ 这样的自定义名称
 2. 可以前往 webpack.base.conf.js 中如下设置:
-3. 
->图
-    
-    
-### 5. 不符合规范导致eslint代码检测工具
->图
-> 如果出现类似以上的错误 , 前往 build 文件下 webpack.base.conf.js  中注释调 eslint-loader  这个loader  就行了
->图
->如果你不想使用eslint 代码检测 你可以在用vue-cli直接在创建vue项目的时候就选择不生成代码检测这个eslint-loader
->图
-        
-        
-        
+
+	
+
 ### 6. 本地开发解决跨域请求的问题
 1. 在 config 文件下的 index.js 文件中修改以下代码
 
@@ -289,30 +283,31 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 ```
 
 
-    ```   
-        在main.js中引入封装后的axios  
-        import http from './utils/fetch'
-        
-        Vue.prototype.http = http;
-    ```
+	```   
+	   	在main.js中引入封装后的axios  
+		import http from './utils/fetch'
+		
+		Vue.prototype.http = http;
+	```
 
 
 >post请求直接放参数， 为何后台接收不到前端的参数 [axios发送post请求，springMVC接收不到数据问题](http://www.jianshu.com/p/042632dec9fb)
-        
-        
-        
-        
+		
+		
+		
+		
 ### 9. Vue数组更新, 却无法渲染问题
- 具体可以参考这里 [变化检测问题（数组相关）](http://www.cnblogs.com/zhuzhenwei918/p/6893496.html)
- 
- 然后我demo可以在我的github上查看 []()
- 
+
  可以使用Vue.$set(object, key, value)来解决这个问题
+
+ >具体可以参考这里 [变化检测问题（数组相关）](http://www.cnblogs.com/zhuzhenwei918/p/6893496.html)
+ 
+ 
  
 
 
 ### 10. 路由懒加载
-    
+	
 ```
     export default new Router({
         routes: [
@@ -328,8 +323,210 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
     
 ```
 
+### 11.自定义组件
+  1. 先创建一个vue的 loading 结构
+  
+  loading.vue
+  
+	```
+	
+		<template>
+		    <div class="loading-wrapper">
+		        <div class="aircle"></div>
+		    </div>
+		</template>
+		<style lang="less" scoped>
+		    .loading-wrapper {
+		        position: fixed;
+		        width: 100%;
+		        height: 100%;
+		        left: 0; top: 0;
+		        background: rgba(0, 0, 0, .5);
+		        .aircle {
+		            width: 300px;
+		            height: 300px;
+		            position: absolute;
+		            left:0;top:0;right:0;bottom:0;
+		            margin: auto;
+		            border-radius: 50%;
+		            background: linear-gradient(#000 50%, #fff 0%);
+		            display: flex;
+		            align-items: center;
+		            animation: rotate 2s linear infinite;
+		        }
+		
+		        .aircle:after,
+		        .aircle:before {
+		            content: "";
+		            flex: 1;
+		            height: calc(100% / 6);
+		            border-radius: 50%;
+		            border: 50px solid #000;
+		            transform-origin: 0 50%;
+		            transform: scale(0.5);
+		            animation: change 1s ease-in-out infinite alternate;
+		        }
+		
+		        .aircle:after {
+		            background: #000;
+		            border-color: #fff;
+		            transform-origin: 100% 50%;
+		            animation-delay: -1s;
+		        }
+		        .aircle:before {
+		            background: #fff;
+		        }
+		
+		        @keyframes change {
+		            100% {
+		                transform: scale(1.5);
+		            }
+		        }
+		
+		        @keyframes rotate {
+		            100% {
+		                transform: rotate(360deg);
+		            }
+		        }
+		    }
+		</style>
+	```		
+2.在创建一个JS 文件引入这个loading.vue
+	
+	index.js
+	
+	```
+		import Vue from 'vue'
+		import LoadingComponent from './loading.vue'
+		
+		
+		//extend 是构造一个组件的语法器.传入参数，返回一个组件
+		let LoadingConstructor = Vue.extend(LoadingComponent);
+		let initComponent;
+		
+		//导出 显示loading组件
+		export const showLoading = (option={}) => {
+		    initComponent = new LoadingConstructor();
+		    initComponent.$mount();
+		    document.querySelector(option.container || 'body').appendChild(initComponent.$el);
+		}
+		
+		//导出 移除loading组件
+		export const hideLoading = () => {
+		    initComponent.$el.parentNode.removeChild(initComponent.$el)
+		}
+	
+	```
+	
+	3.最后创建一个文件统一挂载所有自定义组件到vue原型上
+	
+	output.js
+	
+	```
+		import Alert from './alert/index.js'  //alert组件
+		import { showLoading, hideLoading } from './loading/index.js' //loading组件
+		
+		const install = function(Vue) { //通过install方法挂载到Vue原型上去
+		    Vue.prototype.$alert = Alert;
+		    Vue.prototype.$showLoading = showLoading;
+		    Vue.prototype.$hideLoading = hideLoading;
+		}
+		export default install
+	```
+	
+	4.最后在main.js中引入 output.js
+	
+	```
+		import globalComponents from './components/output'
+	
+		Vue.use(globalComponents);
+	```
+	
+	>在别的组件中通过如下直接调用就行了
+	
+	```
+		created () {
+			this.$showLoading()
+        
+        	setTimeout( () => {
+            	this.$hideLoading()
+        	}, 2000);
 
-### 11.生命周期的钩子函数
+		}
+	```
+	
+### 12.路由之间的切换动画
+
+ 1.用transition元素来做动画， 通过绑定name元素来切换不同的动画
+ 
+```
+	<div class="back" @click="$router.goBack()">返回</div
+	<transition :name="transition">
+        <router-view class="view" />
+    </transition>   
+```
+2.动画样式
+  
+```
+	.view {
+	  padding: 50px 300px;
+	  position: absolute;
+	  left: 0;
+	  top: 0;
+	  width: 100%;
+	  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	}
+	.slide-left-enter,
+	.slide-right-leave-active {
+	  opacity: 0;
+	  transform: translate(100%, 0);
+	}
+	
+	.slide-left-leave-active,
+	.slide-right-enter {
+	  opacity: 0;
+	  transform: translate(-100%, 0);
+	}	
+	
+```
+3.给路由添加返回的状态
+
+```
+	import Vue from 'vue'
+	import Router from 'vue-router'
+	
+	Router.prototype.back = false;
+	Router.prototype.goBack = function () {
+	  	this.back = true;
+	  	this.go(-1)
+	}
+```
+
+4.检测路由的改变来切换状态， 
+
+```
+	export default {
+	  name: "app",
+	    data() {
+	        return {
+	            transition: "slide-left"
+	        };
+	    },
+	    watch: {
+	        $route (to, from ) {
+	            var back = this.$router.back;
+	            if (back) { //点击了返回
+	                this.transition = 'slide-right'
+	            }else{
+	                this.transition = 'slide-left'
+	            }
+	            this.$router.back = false;
+	        }
+	    }
+	
+	}
+```
+### 13.生命周期的钩子函数
 
 ```
     beforeCreate () {
@@ -377,7 +574,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 
 
-### 12. 路由钩子函数
+### 14. 路由钩子函数
 
 ```
     //全局钩子函数
@@ -419,7 +616,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 ```
 
 
-### 13. 打包事项
+### 15. 打包事项
 
 1. 在config 文件下的 index.js 中 修改以下属性 (如果你想在本地打包能看到页面效果, 此步骤不要忘记哦)
 2. 
@@ -433,7 +630,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
     
     
     
-### 14. 简单文件介绍
+### 16. 简单文件介绍
 ```
     .babelrc
 

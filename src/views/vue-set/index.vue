@@ -3,17 +3,17 @@
         <small>页面的数据变化和控制台的打印信息一起观看</small>
         <div class="btn-item">
             <span>更改数组第三个元素的name属性：</span>
-            <button @click="changeChild">change</button>
+            <button class="btn-bg-color" @click="changeChild">change</button>
         </div>
 
         <div class="btn-item">
             <span>更改数组第二个的元素：</span>
-            <button @click="changeEle">change</button>
+            <button class="btn-bg-color" @click="changeEle">change</button>
         </div>
 
         <div class="btn-item">
             <span>引用vue的$set方法更改数组第二个的元素：</span>
-            <button @click="setChangeEle">change</button>
+            <button class="btn-bg-color" @click="setChangeEle">change</button>
         </div>
 
         <ul>
@@ -69,7 +69,6 @@ export default {
             border-radius: 5px;
             outline: none;
             border: none;
-            background: linear-gradient(left , rgba(186,164,119,0.99),#c1866a 100%);
         }
 
         ul {

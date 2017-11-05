@@ -1,16 +1,18 @@
+import Vue from 'vue'
 import axios from 'axios'
 import qs from 'qs'  // 直接post请求后台取不到参数,()
 
 // 发起请求时,会执行该方法
 axios.interceptors.request.use(config => {
     //你可以在这里开始加载动画,  查询token  等等之类
+    Vue.prototype.$showLoading()
     return config
 }, err => {
     return Promise.reject(err)
 })
 
 //接收到后台的数据时执行的方法
-axios.interceptors.response.use(response => response, err => Promise.resolve(err.response))
+axios.interceptors.response.use(response => response, err => Promise.reject(err.response))
 
 
 //检查状态码 status
@@ -29,6 +31,7 @@ function checkStatus(res) {
 
 //检查后台的code 值
 function checkCode(res) {
+    Vue.prototype.$hideLoading()
     if (res.data.code === 0) {  //code值错误时
         alert('出错了')
     }

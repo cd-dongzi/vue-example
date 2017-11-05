@@ -1,16 +1,24 @@
 <template>
     <div class="life-cycle">
 
-        <div class="btn-item">
-            <span>组件更新：</span>
-            <button @click="update">update</button>
-        </div>
-
         <div class="box">
             <ul>
                 <li v-for="v in list">执行阶段：{{v}}</li>
             </ul>
         </div>
+        <hr>
+        <div class="btn-item">
+            <span>组件更新：</span>
+            <button class="btn-bg-color" @click="update">update</button>
+        </div>
+        <div class="text">{{updateText}}</div>
+
+        <hr>
+        <div class="btn-item">
+            <span>实例销毁：</span>
+            <button class="btn-bg-color" @click="destroy">destroy</button>
+        </div>
+        <div class="text">{{destroyText}}</div>
     </div>
 </template>
 
@@ -18,7 +26,9 @@
 export default {
     data () {
         return {
-            list: []
+            list: [],
+            updateText: '组件未更新',
+            destroyText: '实例未销毁'
         }
     },
     
@@ -32,17 +42,17 @@ export default {
     created () {
         console.log('--------------created-------------------')
         console.log('在实例创建完成后被立即调用,挂载阶段还没开始，$el属性目前不可见')
-        this.list.push('created');
+        this.list.push('created: ' + new Date().getTime());
     },
     beforeMount () {
         console.log('--------------beforeMount-------------------')
         console.log('模板编译挂载之前')
-        this.list.push('beforeMount');
+        this.list.push('beforeMount: ' + new Date().getTime());
     },
     mounted () {
         console.log('--------------mounted-------------------')
         console.log('模板编译挂载之后')
-        this.list.push('mounted');
+        this.list.push('mounted: ' + new Date().getTime());
     },
     beforeUpdate () {
         console.log('--------------beforeUpdate-------------------')
@@ -57,25 +67,33 @@ export default {
     activated () {
         console.log('--------------activated-------------------')
         console.log('keep-alive 组件激活时调用')
+        this.list.push('activated: ' + new Date().getTime())
     },
     deactivated () {
         console.log('--------------deactivated-------------------')
         console.log('keep-alive 组件停用时调用')
+        this.list.push('deactivated: ' + new Date().getTime())
     },
     beforeDestroy () {
         console.log('--------------beforeDestroy-------------------')
-        console.log('组件销毁之前')
+        console.log('实例销毁之前')
     },
     destroyed () {
         console.log('--------------destroyed-------------------')
-        console.log('组件销毁之后')
+        console.log('实例销毁之后')
     },
 
 
 
     methods: {
         update () {
-
+            this.updateText = '组件更新，调用了钩子函数'
+        },
+        destroy () {
+            this.destroyText = '实例已销毁'
+            setTimeout( () => {
+                this.$destroy();
+            }, 100);
         }   
     }
 
@@ -85,6 +103,10 @@ export default {
 <style lang="less" scoped>
     .life-cycle {
         text-align: center;
+
+        hr {
+            margin: 20px 0;
+        }
 
         .btn-item {
             margin: 10px 0;
@@ -98,7 +120,6 @@ export default {
             border-radius: 5px;
             outline: none;
             border: none;
-            background: linear-gradient(left , rgba(186,164,119,0.99),#c1866a 100%);
         }
 
         ul {
