@@ -18,6 +18,8 @@ export default {
             .then( res => {
                 console.log(res)
                 this.info = res.data
+            }).catch( err => {
+                this.$hideLoading()
             })
         
     }
